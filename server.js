@@ -15,9 +15,6 @@ var Note = require("./models/Note.js");
 var request = require("request");
 var cheerio = require("cheerio");
 
-// Set mongoose to leverage built in JavaScript ES6 Promises
-mongoose.Promise = Promise;
-
 //Define port
 var port = process.env.PORT || 3000
 
@@ -43,8 +40,15 @@ app.engine("handlebars", exphbs({
 app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
-mongoose.connect("mongodb://heroku_2w64ss31:Aquajava!03@ds113749.mlab.com:13749/heroku_2w64ss31", { auth: { authdb: "admin" } });
-//mongoose.connect("mongodb://localhost/mongooscraper");
+var mongooscraper = process.env.mongooscraper || "mongodb://localhost/mongooscraper";
+
+// Set mongoose to leverage built in JavaScript ES6 Promises
+// Connect to the Mongo DB
+mongoose.Promise = Promise;
+mongoose.connect(mongooscraper, {
+    // useMongoClient: true
+});
+
 var db = mongoose.connection;
 
 // Show any mongoose errors
@@ -57,7 +61,7 @@ db.once("open", function() {
     console.log("Mongoose connection successful.");
 });
 
-// ========================= Routes ======================== //
+// ========================= ROUTES ======================== //
 
 // GET requests to render Handlebars pages
 app.get("/", function(req, res) {
@@ -70,31 +74,27 @@ app.get("/", function(req, res) {
     });
 });
 
-app.get("/saved", function(req, res) {
-    Article.find({ "saved": true }).populate("notes").exec(function(error, articles) {
-        var hbsObject = {
-            article: articles
-        };
-        res.render("saved", hbsObject);
-    });
-});
-
-// A GET request to scrape the lifehacker website
+// A GET request to scrape the NY Times website 
 app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with request
-    request("https://lifehacker.com/tag/app-directory", function(error, response, html) {
+    request("https://www.nytimes.com/", function(error, response, html) {
         // Then, we load that into cheerio and save it to $ for a shorthand selector
         var $ = cheerio.load(html);
+
+        // Save an empty result object
+        var result = {};
+
         // Now, we grab every h2 within an article tag, and do the following:
         $("article").each(function(i, element) {
 
-            // Save an empty result object
-            var result = {};
-
             // Add the title and summary of every link, and save them as properties of the result object
-            result.title = $(this).children("h2").text();
-            result.summary = $(this).children(".summary").text();
-            result.link = $(this).children("h2").children("a").attr("href");
+            var title = $(element).children("h2").text();
+            var summary = $(element).children(".summary").text();
+            var link = $(element).children("h2").children("a").attr("href");
+
+            result.title = title;
+            result.link = link;
+            result.summary = summary;
 
             // Using our Article model, create a new entry
             // This effectively passes the result object to the entry (and the title and link)
@@ -113,10 +113,20 @@ app.get("/scrape", function(req, res) {
             });
 
         });
-        res.send("Scrape Complete");
-
+        // Tell the browser that we finished scraping the text
+        console.log("Scrape Complete");
+        res.redirect("/")
     });
-    // Tell the browser that we finished scraping the text
+});
+
+// Saved articles 
+app.get("/saved", function(req, res) {
+    Article.find({ "saved": true }).populate("notes").exec(function(error, articles) {
+        var hbsObject = {
+            article: articles
+        };
+        res.render("saved", hbsObject);
+    });
 });
 
 // This will get the articles we scraped from the mongoDB

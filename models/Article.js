@@ -25,7 +25,7 @@ var ArticleSchema = new Schema({
         type: Boolean,
         default: false
     },
-    notes: [{
+    note: [{
         type: Schema.Types.ObjectId,
         ref: "Note"
     }]
