@@ -1,3 +1,7 @@
+// Need to fix the "add a note" onclick button in the saved route 
+// Need to fix the scrape articles button to load articles from NY Times
+// Routes in the server JS file need to match to the window.location in this file 
+
 // Handle Scrape button
 $("#scrape").on("click", function() {
     $.ajax({
@@ -5,7 +9,7 @@ $("#scrape").on("click", function() {
         url: "/scrape",
     }).done(function(data) {
         console.log(data)
-        window.location = "/"
+        window.location = "/scrape"
     })
 });
 
@@ -22,7 +26,7 @@ $(".save").on("click", function() {
         method: "POST",
         url: "/articles/save/" + thisId
     }).done(function(data) {
-        window.location = "/"
+        window.location = "/saved"
     })
 });
 
@@ -36,6 +40,19 @@ $(".delete").on("click", function() {
         window.location = "/saved"
     })
 });
+
+///// ===================== NEED TO FIX =================
+// Handle Add Note button 
+$(".addNote").on("click", function() {
+    var thisId = $(this).attr("data-id");
+    $.ajax({
+        method: "POST",
+        url: "/articles/save/addnote" + thisId
+    }).done(function(data) {
+        window.location = "/saved"
+    })
+});
+////// ==================================================
 
 // Handle Save Note button
 $(".saveNote").on("click", function() {

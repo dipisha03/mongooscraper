@@ -61,17 +61,11 @@ db.once("open", function() {
     console.log("Mongoose connection successful.");
 });
 
-// ========================= ROUTES ======================== //
+// =========================== ROUTES =========================== //
 
 // GET requests to render Handlebars pages
 app.get("/", function(req, res) {
-    Article.find({ "saved": false }, function(error, data) {
-        var hbsObject = {
-            article: data
-        };
-        console.log(hbsObject);
-        res.render("home", hbsObject);
-    });
+    res.render("home");
 });
 
 // A GET request to scrape the NY Times website 
@@ -163,7 +157,6 @@ app.get("/articles/:id", function(req, res) {
         });
 });
 
-
 // Save an article
 app.post("/articles/save/:id", function(req, res) {
     // Use the article id to find and update its saved boolean
@@ -195,7 +188,6 @@ app.post("/articles/delete/:id", function(req, res) {
             }
         });
 });
-
 
 // Create a new note
 app.post("/notes/save/:id", function(req, res) {
