@@ -70,12 +70,13 @@ app.get("/", function(req, res) {
 
 // A GET request to scrape the NY Times website 
 app.get("/scrape", function(req, res) {
+
     // First, we grab the body of the html with request
     request("https://www.nytimes.com/", function(error, response, html) {
         // Then, we load that into cheerio and save it to $ for a shorthand selector
         var $ = cheerio.load(html);
 
-        // Save an empty result object
+        // Save the result in an empty object
         var result = {};
 
         // Now, we grab every h2 within an article tag, and do the following:
@@ -87,6 +88,7 @@ app.get("/scrape", function(req, res) {
             var link = $(element).children("h2").children("a").attr("href");
 
             result.title = title;
+            console.log(result);
             result.link = link;
             result.summary = summary;
 
@@ -104,13 +106,16 @@ app.get("/scrape", function(req, res) {
                 else {
                     console.log(doc);
                 }
+
             });
 
+            // Tell the browser that we finished scraping the text
+            console.log("Scrape Complete");
+
         });
-        // Tell the browser that we finished scraping the text
-        console.log("Scrape Complete");
-        res.redirect("/")
+
     });
+    res.render("main", result);
 });
 
 // Saved articles 
@@ -216,6 +221,7 @@ app.post("/notes/save/:id", function(req, res) {
                     } else {
                         // Or send the note to the browser
                         res.send(note);
+                        res.render("note");
                     }
                 });
         }

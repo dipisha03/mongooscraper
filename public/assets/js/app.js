@@ -9,7 +9,7 @@ $("#scrape").on("click", function() {
         url: "/scrape",
     }).done(function(data) {
         console.log(data)
-        window.location = "/scrape"
+        window.location = "/"
     })
 });
 
@@ -47,7 +47,7 @@ $(".addNote").on("click", function() {
     var thisId = $(this).attr("data-id");
     $.ajax({
         method: "POST",
-        url: "/articles/save/addnote" + thisId
+        url: "/notes/save/:id" + thisId
     }).done(function(data) {
         window.location = "/saved"
     })
@@ -62,7 +62,7 @@ $(".saveNote").on("click", function() {
     } else {
         $.ajax({
             method: "POST",
-            url: "/notes/save/" + thisId,
+            url: "/notes/save/:id" + thisId,
             data: {
                 text: $("#noteText" + thisId).val()
             }
