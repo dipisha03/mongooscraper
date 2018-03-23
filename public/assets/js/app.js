@@ -1,16 +1,14 @@
-// Need to fix the "add a note" onclick button in the saved route 
-// Need to fix the scrape articles button to load articles from NY Times
-// Routes in the server JS file need to match to the window.location in this file 
+// ==========================================
+// App Functions 
+// ==========================================
 
 // Handle Scrape button
 $("#scrape").on("click", function() {
-    $.ajax({
-        method: "GET",
-        url: "/scrape",
-    }).done(function(data) {
+
+    $.get("/scrape", function(data){
         console.log(data)
         window.location = "/"
-    })
+    });
 });
 
 // Set clicked nav option to active
@@ -23,7 +21,7 @@ $(".navbar-nav li").click(function() {
 $(".save").on("click", function() {
     var thisId = $(this).attr("data-id");
     $.ajax({
-        method: "POST",
+        method: "GET",
         url: "/articles/save/" + thisId
     }).done(function(data) {
         window.location = "/saved"
@@ -41,46 +39,64 @@ $(".delete").on("click", function() {
     })
 });
 
-///// ===================== NEED TO FIX =================
 // Handle Add Note button 
 $(".addNote").on("click", function() {
     var thisId = $(this).attr("data-id");
-    $.ajax({
-        method: "POST",
-        url: "/notes/save/:id" + thisId
-    }).done(function(data) {
-        window.location = "/saved"
+    console.log(thisId)
+    $("#noteModal").attr("data-articleID", thisId)
+     $("#all-notes").empty().addClass("hide")
+     $("#no-notes").empty().addClass("hide")
+    $.get(`/article/${thisId}/notes/`, function(notes){
+        console.log(notes);
+
+        if(notes.length === 0){
+            $("#no-notes").removeClass("hide").append(`<h4>No notes for this article yet.</h4>`)
+            $("#noteModal").modal("show")
+        }else{
+            notes.forEach(function(note){
+                $("#all-notes").removeClass("hide").append(`
+                    <p class="previousNotes">${note.body}</p>
+                            <button type="button" class="btn btn-danger deleteNote" data-noteID="${note["_id"]}">X</button>
+                    <hr>
+                `) 
+            })
+            $("#noteModal").modal("show")
+        }
     })
 });
-////// ==================================================
 
-// Handle Save Note button
-$(".saveNote").on("click", function() {
-    var thisId = $(this).attr("data-id");
-    if (!$("#noteText" + thisId).val()) {
-        alert("please enter a note to save")
-    } else {
-        $.ajax({
-            method: "POST",
-            url: "/notes/save/:id" + thisId,
-            data: {
-                text: $("#noteText" + thisId).val()
-            }
-        }).done(function(data) {
-            // Log the response
-            console.log(data);
-            // Empty the notes section
-            $("#noteText" + thisId).val("");
-            $(".modalNote").modal("hide");
-            window.location = "/saved"
-        });
+// Handle Save note button
+$(document).on("click", "#save-note", function(){
+    console.log("clicked")
+    var selectedArticleID = $("#noteModal").attr("data-articleID");
+    var noteBody = $("#note-body").val().trim()
+
+    console.log(noteBody)
+    console.log(selectedArticleID)
+    if(noteBody.length > 0){
+        var newNote = {
+            body: noteBody
+        }
+        $.post(`/notes/save/${selectedArticleID}`, newNote, function(res){
+            console.log("^^^^^",res)
+             $("#all-notes").empty().addClass("hide")
+             $("#no-notes").empty().addClass("hide")
+             $("#all-notes").removeClass("hide").append(`
+                    <p class="previousNotes">${res.body}</p>
+                            <button type="button" class="btn btn-danger deleteNote" data-noteID="${res["_id"]}">X</button>
+                    <hr>
+                `) 
+             $("#note-body").val("")
+
+        })
     }
-});
+})
 
 // Handle Delete Note button
-$(".deleteNote").on("click", function() {
-    var noteId = $(this).attr("data-note-id");
-    var articleId = $(this).attr("data-article-id");
+$(document).on("click", ".deleteNote",  function() {
+    var noteId = $(this).attr("data-noteID");
+    var articleId = $("#modalNote").attr("data-articleID")
+    //console.log("click")
     $.ajax({
         method: "DELETE",
         url: "/notes/delete/" + noteId + "/" + articleId

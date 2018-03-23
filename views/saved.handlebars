@@ -26,7 +26,7 @@
         {{else}}
         <div class="panel panel-default">
             <div class="panel-body">
-                <h4>You have no saved articles.</h4>
+                <h4>You have no saved articles :(</h4>
             </div>
         </div>
         {{/if}}
@@ -34,6 +34,36 @@
 </div>
 
 <!--Clicked Notes Modal-->
-{{#each article}}
-    {{ notes-modal }}
-{{/each}}
+<div class="modal fade modalNote" id="noteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Notes for</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-notes">
+                    <div class="panel panel-default">
+                        <div class="panel-body hide" id="all-notes">
+                           {{!--  <p class="previousNotes"> </p>
+                            <button type="button" class="btn btn-danger deleteNote">X</button> --}}
+                        </div>
+                    </div>
+                
+                    <div class="panel panel-default">
+                        <div class="panel-body hide" id="no-notes">
+                           {{!--  <h4>No notes for this article yet.</h4> --}}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <textarea  id="note-body" class="form-control" rows="4" placeholder="New Note"></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary saveNote" id="save-note">Save Note</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,11 +4,10 @@
         <div class="text-center">
             <h1>Mongooscraper</h1>
         </div>
-
     </div>
     <div class="col-md-12">
-        {{#if article}}
-            {{#each article}}
+        {{#if articles}}
+            {{#each articles}}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4>{{this.title}}</h4>
@@ -24,7 +23,7 @@
         {{else}}
         <div class="panel panel-default">
             <div class="panel-body">
-            <h4>Uh Oh. Looks like we don't have any new articles.</h4>
+            <h4>Uh Oh. Looks like we don't have any new articles :(</h4>
             </div>
          </div>
         {{/if}}
