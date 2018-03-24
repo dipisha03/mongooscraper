@@ -69,15 +69,15 @@ db.once("open", function() {
 // This will get the articles we scraped from the mongoDB
 app.get("/", function(req, res) {
     // get ball articles from the db
-    Article.find({})
-    .then(function(data){
-        // create a object for the array (data) because handlebars only take objects
-        var handlebarsObj = {
-            articles: data
-        }
-        // render the home template and pass in the object that holds the array of articles
-        res.render("home", handlebarsObj);
-    })  
+    // Article.find({})
+    // .then(function(data){
+    //     // create a object for the array (data) because handlebars only take objects
+    //     var handlebarsObj = {
+    //         articles: data
+    //     }
+    //     // render the home template and pass in the object that holds the array of articles
+    //     res.render("home", handlebarsObj);
+    // })  
 });
 
 // Saved articles 
