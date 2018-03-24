@@ -42,12 +42,13 @@ app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
 var mongooscraper = process.env.MONGODB_URI || "mongodb://localhost/mongooscraper";
-
+console.log(mongooscraper);
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
 mongoose.connect(mongooscraper, {
     // useMongoClient: true
+   
 });
 
 var db = mongoose.connection;
