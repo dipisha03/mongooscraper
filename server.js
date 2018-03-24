@@ -41,7 +41,7 @@ app.engine("handlebars", exphbs({
 app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
-var mongooscraper = process.env.mongooscraper || "mongodb://localhost/mongooscraper";
+var mongooscraper = process.env.MONGODB_URI || "mongodb://localhost/mongooscraper";
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
