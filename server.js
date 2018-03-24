@@ -46,10 +46,11 @@ console.log(mongooscraper);
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
-mongoose.connect(mongooscraper, {
-    // useMongoClient: true
+// mongoose.connect(mongooscraper, {
+//     // useMongoClient: true
    
-});
+// });
+mongoose.connect( process.env.MONGODB_URI);
 
 var db = mongoose.connection;
 
@@ -69,15 +70,15 @@ db.once("open", function() {
 // This will get the articles we scraped from the mongoDB
 app.get("/", function(req, res) {
     // get ball articles from the db
-    // Article.find({})
-    // .then(function(data){
-    //     // create a object for the array (data) because handlebars only take objects
-    //     var handlebarsObj = {
-    //         articles: data
-    //     }
-    //     // render the home template and pass in the object that holds the array of articles
-    //     res.render("home", handlebarsObj);
-    // })  
+    Article.find({})
+    .then(function(data){
+        // create a object for the array (data) because handlebars only take objects
+        var handlebarsObj = {
+            articles: data
+        }
+        // render the home template and pass in the object that holds the array of articles
+        res.render("home", handlebarsObj);
+    })  
 });
 
 // Saved articles 
