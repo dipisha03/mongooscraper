@@ -121,7 +121,7 @@ app.get("/scrape", function(req, res) {
             // make sure values exist before creating in db
             // Using our Article model, create a new entry
             // This effectively passes the result object to the entry (and the title and link)
-            if(result.title.length> 0 && result.link.length> 0 && result.summary>0){
+            if(result.title.length> 0 && result.link.length> 0 && result.summary.length>0){
                 var entry = new Article(result);
                 // Now, save that entry to the db
                 entry.save(function(err, doc) {
